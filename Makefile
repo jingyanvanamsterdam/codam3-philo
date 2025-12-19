@@ -4,8 +4,8 @@ SRC_DIR = src
 OBJ_DIR := obj
 LIBFT_DIR = libft
 
-SRC = $(shell find ./src -iname "*.c")
-OBJ = $(SRC:./$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+SRC = $(addprefix $(SRC_DIR)/, main.c exit_func.c init.c routines.c)
+OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 FLAGS = -Werror -Wextra -Wall -pthread
 HEADERS := -Iinclude -I$(LIBFT_DIR)

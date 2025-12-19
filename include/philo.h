@@ -33,5 +33,16 @@ struct	s_var
 	t_fork		*forks;
 	t_fork		start_mutex;
 };
+// ======= free and exit funcs	=============
+void	ft_cleanup(t_var *var, int fork_i, int th_i);
+void	ft_failure_exit(char *mes, t_var *var, int fork_i, int th_i);
+
+// ======= initialization funcs =============
+void	init_var(int ac, char **av, t_var *var);
+void	create_philos_threads(t_var *var);
+
+// ======= routines funcs ====================
+void	*check_routine(void *arg);
+void	*routine(void *arg);
 
 #endif
