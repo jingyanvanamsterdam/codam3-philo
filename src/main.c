@@ -26,20 +26,22 @@ int	is_valid_input(char **av)
 	return (1);
 }
 
-long long	get_ms_time(struct timeval *tv)
+long long	get_ms_time(void)
 {
-	if (gettimeofday(tv, NULL) == -1)
+	struct timeval tv;
+
+	if (gettimeofday(&tv, NULL) == -1)
 	{
 		perror("gettimeofday failed.");
 		return (-1);
 	}
-	return (tv->tv_sec * 1000LL + tv->tv_usec / 1000);
+	//printf("time is %ld, %d, %lld\n", tv.tv_sec, tv.tv_usec);
+	return (tv.tv_sec * 1000LL + tv.tv_usec / 1000);
 }
 
 int	main(int ac, char *av[])
 {
 	t_var		var;
-	struct timeval tv;
 	long long	time;
 	
 	if (ac < 5 || ac > 7)
@@ -49,10 +51,10 @@ int	main(int ac, char *av[])
 	init_var(ac, av, &var);
 	create_philos_threads(&var);
 
-	time = get_ms_time(&tv);
+	time = get_ms_time();
 	if (time == -1)
 		return (write(2, "sys call error", ft_strlen("sys call error")));
-	printf("time is %ld, %d, %lld\n", tv.tv_sec, tv.tv_usec, time);
+	
 	printf("philos = %d; to die = %lld ms; to eat = %lld ms; to sleep = %lld ms->\n", var.nbr_ph, var.tm_die, var.tm_eat, var.tm_sleep);
 	
 	ft_cleanup(&var, var.nbr_ph, var.nbr_ph);

@@ -25,14 +25,21 @@ struct	s_var
 	long long	tm_eat;
 	long long	tm_sleep;
 	int			must_eat;
-	long long	start_tm;
-	bool		start;
 	pthread_t	*threads;
 	pthread_t	check_die;
 	t_philo		*philos;
 	t_fork		*forks;
 	t_fork		start_mutex;
+	long long	start_tm;
+	bool		start;
 };
+
+long long	get_ms_time(void);
+
+// ======= locks 				============
+void	get_start(t_var *var);
+
+
 // ======= free and exit funcs	=============
 void	ft_cleanup(t_var *var, int fork_i, int th_i);
 void	ft_failure_exit(char *mes, t_var *var, int fork_i, int th_i);

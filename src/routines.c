@@ -8,7 +8,10 @@
 
 void	*check_routine(void *arg)
 {
-	(void)arg;
+	t_var	*var;
+
+	var = (t_var *)arg;
+	get_start(var);
 	// start mutex wait for all the threads are created.
 	// check all the t_philo last meal and check death time.
 	return (NULL);
@@ -16,8 +19,13 @@ void	*check_routine(void *arg)
 
 void	*routine(void *arg)
 {
-	(void)arg;
 	// start mutex: wait for all the threads are created. 
+	t_philo *philo;
+	t_var	*var;
+
+	philo = (t_philo *)arg;
+	var = philo->var;
+	get_start(var);
 	// wait for lock: get_left_fork(); get_right_fork();
 	// eat: last_meal = get_ms_time(); usleep(var->tm_eat);
 	// unlock
