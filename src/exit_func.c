@@ -34,9 +34,6 @@ void	ft_cleanup(t_var *var, int fork_i, int th_i)
 
 void	ft_failure_exit(char *mes, t_var *var, int fork_i, int th_i)
 {
-	int	i;
-
-	i = 0;
 	ft_putstr_fd(mes, 2);
 	ft_cleanup(var, fork_i, th_i);
 	exit(EXIT_FAILURE);

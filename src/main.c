@@ -56,6 +56,7 @@ int	main(int ac, char *av[])
 	printf("philos = %d; to die = %lld ms; to eat = %lld ms; to sleep = %lld ms->\n", var.nbr_ph, var.tm_die, var.tm_eat, var.tm_sleep);
 	
 	ft_cleanup(&var, var.nbr_ph, var.nbr_ph);
+	return (0);
 	//pthread_join(var->threads[i], NULL);
 	/*
 	time_die, time_eat, time_sleep, [number_of_times_each_philosopher_must_eat]

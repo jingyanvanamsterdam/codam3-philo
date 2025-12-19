@@ -52,10 +52,7 @@ static void	init_philo(pthread_t th, int i, t_var *var)
 	var->philos[i].right = var->forks + (i + 1) % var->nbr_ph; 
 	var->philos[i].th_id = th;
 	var->philos[i].var = var;
-	if (i == 0)
-		printf("id = %d, philo.left = %p = %p prev right; right = %p, th adr = %p\n", i, var->philos[i].left, var->forks + (var->nbr_ph - 1), var->philos[i].right, &(var->philos[i].th_id));
-	else 
-		printf("id = %d, philo.left = %p = %p prev right; right = %p, th adr = %p\n", i, var->philos[i].left, var->forks + (i - 1), var->philos[i].right, &(var->philos[i].th_id));
+	printf("th adr = %p; id = %d, philo.left = %p; right = %p\n", var->philos[i].th_id, i, var->philos[i].left, var->philos[i].right);
 }
 
 void	create_philos_threads(t_var *var)
@@ -73,6 +70,7 @@ void	create_philos_threads(t_var *var)
 	{
 		if (pthread_create(var->threads + i, NULL, routine, NULL) != 0)
 			ft_failure_exit("creating thread: ", var, var->nbr_ph, i);
+		printf("th add = %p -- ", var->threads[i]);
 		init_philo(var->threads[i], i, var);
 		i++;
 	}
