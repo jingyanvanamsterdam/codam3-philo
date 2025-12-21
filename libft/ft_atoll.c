@@ -5,32 +5,54 @@
 /*                                                     +:+                    */
 /*   By: jingyandong <jingyandong@student.codam.      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/12/18 13:32:58 by jingyandong   #+#    #+#                 */
-/*   Updated: 2025/12/18 13:33:33 by jingyandong   ########   odam.nl         */
+/*   Created: 2025/12/20 15:30:28 by jingyandong   #+#    #+#                 */
+/*   Updated: 2025/12/20 15:30:30 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <limits.h>
 
-long long ft_atoll(char *nptr)
+static char	*valid_input(char *nptr)
 {
-	long long	nbr;
-	long long	sign;
+	int	len;
+	char *nbr;
+	
+	len = 0;
+	while ((*nptr >= 9 && *nptr <= 13) || *nptr == 32)
+		nptr++;
+	if (*nptr == '+')
+		nptr++;
+	else if (*nptr == '-')
+		return (ft_putstr_fd("Need possitive value.", 2), NULL);
+	if (!ft_isdigit(*nptr))
+		return (ft_putstr_fd("Input is not number", 2), NULL);
+	nbr = nptr;
+	while (ft_isdigit(*nptr))
+	{
+		len++;
+		nptr++;
+	}
+	if (len > 10)
+		return (ft_putstr_fd("Input is too big. Limit is INT_MAX", 2), NULL);
+	return (nbr);
+}
 
-	nbr = 0;
-	sign = 1;
-		while ((*nptr >= 9 && *nptr <= 13) || *nptr == 32)
-		nptr++;
-	if (*nptr == '-' || *nptr == '+')
+long long	ft_atoll(char *nptr)
+{
+	long long	res;
+	char		*nbr;
+
+	res = -1;
+	nbr = valid_input(nptr);
+	if (!nbr)
+		return (res);
+	while (ft_isdigit(*nptr))
 	{
-		if (*nptr == '-')
-			sign = -1;
+		res = (*nptr - '0') + res * 10;
 		nptr++;
 	}
-	while (*nptr >= '0' && *nptr <= '9')
-	{
-		nbr = (*nptr - '0') + nbr * 10;
-		nptr++;
-	}
-	return (sign * nbr);
+	if (res > INT_MAX)
+		return (ft_putstr_fd("Input is too big. Limit is INT_MAX", 2), -1);
+	return (res);
 }

@@ -4,6 +4,16 @@
 # include <pthread.h>
 # include <stdbool.h>
 
+typedef enum	e_status
+{
+	EAT,
+	SLEEP,
+	THINK,
+	TAKE_FIRST_FORK,
+	TAKE_SECOND_FORK,
+	DIED
+}				t_status;
+
 typedef struct s_var t_var;
 typedef pthread_mutex_t t_fork;
 
@@ -13,8 +23,8 @@ typedef struct	s_philo
 	pthread_t	th_id;
 	bool		full;
 	long long	last_meal;
-	t_fork		*left;
-	t_fork		*right;
+	t_fork		*first;
+	t_fork		*second;
 	t_var		*var;
 }				t_philo;
 
@@ -25,14 +35,23 @@ struct	s_var
 	long long	tm_eat;
 	long long	tm_sleep;
 	int			must_eat;
+
 	pthread_t	*threads;
 	pthread_t	check_die;
+
 	t_philo		*philos;
 	t_fork		*forks;
+
 	t_fork		start_mutex;
 	long long	start_tm;
-	bool		start;
+	bool		start; //when everyone eat == must_eat; or someone died.
+
+	t_fork		write_mutex;
 };
+
+// Utils: getter and setter with mutex lock and unlock
+bool	get_bool(t_fork *mutex, bool *value);
+bool	set_bool(t_fork *mutex, bool *dest, bool value);
 
 long long	get_ms_time(void);
 
@@ -49,7 +68,7 @@ void	init_var(int ac, char **av, t_var *var);
 void	create_philos_threads(t_var *var);
 
 // ======= routines funcs ====================
-void	*check_routine(void *arg);
+void	*check_death(void *arg);
 void	*routine(void *arg);
 
 #endif
