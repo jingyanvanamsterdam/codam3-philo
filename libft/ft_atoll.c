@@ -6,12 +6,13 @@
 /*   By: jingyandong <jingyandong@student.codam.      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/12/20 15:30:28 by jingyandong   #+#    #+#                 */
-/*   Updated: 2025/12/20 15:30:30 by jingyandong   ########   odam.nl         */
+/*   Updated: 2025/12/22 12:28:29 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <limits.h>
+#include <stdio.h> // printf
 
 static char	*valid_input(char *nptr)
 {
@@ -43,10 +44,10 @@ long long	ft_atoll(char *nptr)
 	long long	res;
 	char		*nbr;
 
-	res = -1;
+	res = 0;
 	nbr = valid_input(nptr);
 	if (!nbr)
-		return (res);
+		return (-1);
 	while (ft_isdigit(*nptr))
 	{
 		res = (*nptr - '0') + res * 10;

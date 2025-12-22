@@ -2,7 +2,7 @@
 #include "philo.h"
 #include <stdbool.h>
 
-bool	get_bool(t_fork *mutex, bool *value)
+bool	get_bool(t_mutex *mutex, bool *value)
 {
 	bool	res;
 
@@ -12,7 +12,7 @@ bool	get_bool(t_fork *mutex, bool *value)
 	return (res);
 }
 
-bool	set_bool(t_fork *mutex, bool *dest, bool value)
+void	set_bool(t_mutex *mutex, bool *dest, bool value)
 {
 	pthread_mutex_lock(mutex);
 	*dest = value;

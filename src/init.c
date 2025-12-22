@@ -1,6 +1,6 @@
 #include "libft.h"
 //#include <unistd.h>
-//#include <stdio.h>
+#include <stdio.h>
 #include <pthread.h>
 //#include <sys/time.h>
 #include <stdlib.h>
@@ -11,7 +11,7 @@ static void	prepare_forks(t_var *var)
 	int	i;
 
 	i = 0;
-	var->forks = ft_calloc(var->nbr_ph, sizeof(t_fork));
+	var->forks = ft_calloc(var->nbr_ph, sizeof(t_mutex));
 	if (!var->forks)
 		ft_failure_exit("malloc forks: ", var, 0, 0);
 	while (i < var->nbr_ph)
@@ -38,10 +38,7 @@ void	init_var(int ac, char **av, t_var *var)
 	var->start = false;
 	if (pthread_mutex_init(&(var->start_mutex), NULL) != 0
 		|| pthread_mutex_init(&(var->write_mutex), NULL) != 0)
-	{
-		perror("create mutex: ");
-		exit(EXIT_FAILURE);
-	}
+		ft_failure_exit("create check death thread.", var, var->nbr_ph, 0);
 	prepare_forks(var);
 	if (pthread_create(&(var->check_die), NULL, check_death, var) != 0)
 		ft_failure_exit("create check death thread.", var, var->nbr_ph, 0);
@@ -49,25 +46,31 @@ void	init_var(int ac, char **av, t_var *var)
 
 static void	init_philo(int i, t_var *var)
 {
-	var->philos[i].var = var;
-	var->philos[i].full = false;
-	var->philos[i].id = i;
-	var->philos[i].last_meal = 0;
-	if (i % 2 == 0)
+	t_philo	*philo;
+
+	philo = &(var->philos[i]);
+	philo->var = var;
+	philo->full = false;
+	philo->id = i;
+	philo->last_meal = get_ms_time();
+	philo->meals = 0;
+	if (i % 2 != 0)
 	{
-		var->philos[i].first = var->forks + i;
-		var->philos[i].second = var->forks + ((i + 1) % var->nbr_ph);
+		philo->first = var->forks + i;
+		philo->second = var->forks + ((i + 1) % var->nbr_ph);
 	}
 	else
 	{
-		var->philos[i].first = var->forks + ((i + 1) % var->nbr_ph);
-		var->philos[i].second = var->forks + i;
+		philo->first = var->forks + ((i + 1) % var->nbr_ph);
+		philo->second = var->forks + i;
 	}
+	if (pthread_mutex_init(&(philo->meal_mut), NULL) != 0)
+		ft_failure_exit("createing mutex: ", var, var->nbr_ph, i);
 	if (pthread_create(var->threads + i, NULL, routine, &(var->philos[i])) != 0)
 		ft_failure_exit("creating thread: ", var, var->nbr_ph, i);
-	var->philos[i].th_id = var->threads[i];
+	philo->th_id = var->threads[i];
 	printf("th add = %p -- ", var->threads[i]);
-	printf("th adr = %p; id = %d, philo.first = %p; second = %p\n", var->philos[i].th_id, i, var->philos[i].first, var->philos[i].second);
+	printf("th adr = %p; id = %d, philo.first = %p; second = %p\n", philo->th_id, i, philo->first, philo->second);
 }
 
 void	create_philos_threads(t_var *var)

@@ -6,31 +6,15 @@
 #include <stdlib.h>
 #include "philo.h"
 
-void	finish_table(t_var *var)
-{
-	int	i;
-
-	i = 0;
-	while (i < var->nbr_ph)
-	{
-		pthread_join(&(var->philos[i]), NULL);
-		i++;
-	}
-	i = 0;
-	while (i < var->nbr_ph)
-	{
-		pthread_mutex_destroy(&(var->forks[i]));
-		i++;
-	}
-}
-
 int	is_philo_died(t_philo *philo)
 {
 	long long	now;
 
 	now = get_ms_time();
+	pthread_mutex_lock(&(philo->meal_mut));
 	if (now - philo->last_meal > philo->var->tm_die)
 		return (1);
+	pthread_mutex_unlock(&(philo->meal_mut));
 	return (0);
 }
 
@@ -38,26 +22,37 @@ void	*check_death(void *arg)
 {
 	t_var	*var;
 	int		i;
-	t_philo	*philos;
+	int		all_full;
 
 	var = (t_var *)arg;
 	get_start(var);
-	i = 0;
-	philos = var->philos;
-	// check all the t_philo last meal and check death time.
 	while (get_bool(&(var->start_mutex), &(var->start)))
 	{
+		i = 0;
+		all_full = 0;
 		while (i < var->nbr_ph)
 		{
-			if (is_philo_died(&philos[i]))
+			if (is_philo_died(&(var->philos[i])))
 			{
-				var->start = false;
+				set_bool(&var->start_mutex, &var->start, false);
 				break;
 			}
-			i++;
+			if (var->philos[i++].full)
+			{
+				all_full++;
+				//printf("all full++\n");
+			}	
 		}
+		if (all_full == var->nbr_ph)
+		{
+			set_bool(&var->start_mutex, &var->start, false);
+			printf("%d\n", all_full);
+			break;
+		}
+		usleep(100);
 	}
-	finish_table(var);
+	//printf("finished loop in check death\n");
+	//ft_cleanup(var, var->nbr_ph, var->nbr_ph);
 	return (NULL);
 }
 
@@ -71,10 +66,12 @@ void	*routine(void *arg)
 	get_start(var);
 	while (get_bool(&(var->start_mutex), &(var->start)))
 	{
+		if (philo->full)
+			break;
 		eating(philo);
 		sleep_think(philo);
 	}
-	// wait for lock: get_left_fork(); get_right_fork();
+	// wait for lock: get_left_mutex(); get_right_mutex();
 	// eat: last_meal = get_ms_time(); usleep(var->tm_eat);
 	// unlock
 	// sleep: sleep = get_ms_time(); usleep(var->tm_sleep);
