@@ -26,7 +26,6 @@ int	main(int ac, char *av[])
 	if (ac < 5 || ac > 7)
 		return (ft_putstr_fd("input error", 2), 1);
 	init_var(ac, av, &var);
-	printf("before philo");
 	create_philos_threads(&var);
 	printf("after philo\n");
 	//time = get_ms_time();

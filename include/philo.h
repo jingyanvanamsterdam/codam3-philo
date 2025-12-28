@@ -9,9 +9,11 @@ typedef enum	e_status
 	EAT,
 	SLEEP,
 	THINK,
-	TAKE_FIRSt_mutex,
+	TAKE_FIRST_FORK,
 	TAKE_SECOND_FORK,
-	DIED
+	DIED,
+	FULL,
+	START
 }				t_status;
 
 typedef struct s_var t_var;

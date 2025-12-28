@@ -24,7 +24,7 @@ static void	prepare_forks(t_var *var)
 
 void	init_var(int ac, char **av, t_var *var)
 {
-	var->nbr_ph = ft_atoi(av[1]);
+	var->nbr_ph = ft_atoi(av[1]); // if nbr == 1 ? 
 	var->tm_die = ft_atoll(av[2]);
 	var->tm_eat= ft_atoll(av[3]);
 	var->tm_sleep = ft_atoll(av[4]);
@@ -38,10 +38,8 @@ void	init_var(int ac, char **av, t_var *var)
 	var->start = false;
 	if (pthread_mutex_init(&(var->start_mutex), NULL) != 0
 		|| pthread_mutex_init(&(var->write_mutex), NULL) != 0)
-		ft_failure_exit("create check death thread.", var, var->nbr_ph, 0);
+		ft_failure_exit("init start mutex", var, var->nbr_ph, 0);
 	prepare_forks(var);
-	if (pthread_create(&(var->check_die), NULL, check_death, var) != 0)
-		ft_failure_exit("create check death thread.", var, var->nbr_ph, 0);
 }
 
 static void	init_philo(int i, t_var *var)
@@ -89,6 +87,11 @@ void	create_philos_threads(t_var *var)
 		init_philo(i, var);
 		i++;
 	}
-	set_bool(&(var->start_mutex), &(var->start), true);
+	i = 0;
 	var->start_tm = get_ms_time();
+	while (i < var->nbr_ph)
+		var->philos[i++].last_meal = var->start_tm;
+	set_bool(&(var->start_mutex), &(var->start), true);
+	if (pthread_create(&(var->check_die), NULL, check_death, var) != 0)
+		ft_failure_exit("create check death thread.", var, var->nbr_ph, 0);
 }
