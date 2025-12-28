@@ -30,20 +30,27 @@ void	ft_destory_fork(int fork_i, t_var *var)
 	}
 	free(var->forks);
 }
-
+/**
+ * Join the checker thread first to ensure it isn't holding the
+ * write mutex while we wait for philosopher threads to finish. 
+ * */
 void	ft_cleanup(t_var *var, int fork_i, int th_i)
 {
 	int i;
 
 	i = 0;
-	if (var->threads)
-		ft_join_threads(th_i, var);
+
 	if (th_i != 0)
 		pthread_join(var->check_die, NULL);
+	if (var->threads)
+		ft_join_threads(th_i, var);
 	if (var->forks)
 		ft_destory_fork(fork_i, var);
 	while (i < th_i)
+	{
 		pthread_mutex_destroy(&(var->philos[i].meal_mut));
+		i++;
+	}
 	pthread_mutex_destroy(&(var->start_mutex));
 	pthread_mutex_destroy(&(var->write_mutex));
 }
@@ -51,6 +58,7 @@ void	ft_cleanup(t_var *var, int fork_i, int th_i)
 void	ft_failure_exit(char *mes, t_var *var, int fork_i, int th_i)
 {
 	ft_putstr_fd(mes, 2);
-	ft_cleanup(var, fork_i, th_i);
+	if (fork_i != 0 || th_i != 0)
+		ft_cleanup(var, fork_i, th_i);
 	exit(EXIT_FAILURE);
 }

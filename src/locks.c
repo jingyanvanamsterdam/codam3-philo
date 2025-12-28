@@ -11,8 +11,3 @@ void	get_start(t_var *var)
 	while (!get_bool(&(var->start_mutex), &(var->start)))
 		usleep(100);
 }
-
-
-
-
-

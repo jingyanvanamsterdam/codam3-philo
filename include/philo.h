@@ -12,8 +12,7 @@ typedef enum	e_status
 	TAKE_FIRST_FORK,
 	TAKE_SECOND_FORK,
 	DIED,
-	FULL,
-	START
+	FULL
 }				t_status;
 
 typedef struct s_var t_var;

@@ -28,12 +28,16 @@ void	init_var(int ac, char **av, t_var *var)
 	var->tm_die = ft_atoll(av[2]);
 	var->tm_eat= ft_atoll(av[3]);
 	var->tm_sleep = ft_atoll(av[4]);
-	var->must_eat = -1;
-	if (ac == 6)
-		var->must_eat = ft_atoi(av[5]);
 	if (var->nbr_ph < 0 || var->tm_die < 0 || var->tm_eat < 0
 		|| var->tm_sleep < 0)
 		exit(EXIT_FAILURE);
+	var->must_eat = -1;
+	if (ac == 6)
+	{
+		var->must_eat = ft_atoi(av[5]);
+		if (var->must_eat == 0)
+			ft_failure_exit("Must eat value cannot be 0\n", var, 0, 0);
+	}
 	var->threads = NULL;
 	var->start = false;
 	if (pthread_mutex_init(&(var->start_mutex), NULL) != 0
@@ -67,10 +71,14 @@ static void	init_philo(int i, t_var *var)
 	if (pthread_create(var->threads + i, NULL, routine, &(var->philos[i])) != 0)
 		ft_failure_exit("creating thread: ", var, var->nbr_ph, i);
 	philo->th_id = var->threads[i];
-	printf("th add = %p -- ", var->threads[i]);
-	printf("th adr = %p; id = %d, philo.first = %p; second = %p\n", philo->th_id, i, philo->first, philo->second);
+	//printf("th add = %p -- ", var->threads[i]);
+	//printf("th adr = %p; id = %d, philo.first = %p; second = %p\n", philo->th_id, i, philo->first, philo->second);
 }
-
+/**
+ * Create threads one by one.
+ * After all the philos are created, get last_eat time with start time.
+ * Then create Check_death thread.
+ */
 void	create_philos_threads(t_var *var)
 {
 	int	i;
