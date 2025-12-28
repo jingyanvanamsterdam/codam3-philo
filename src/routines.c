@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "philo.h"
 
-t_status	is_philo_died(t_philo *philo)
+static t_status	check_philo_status(t_philo *philo, int *all_full)
 {
 	long long	now;
 	t_status	status;
@@ -16,9 +16,14 @@ t_status	is_philo_died(t_philo *philo)
 	pthread_mutex_lock(&(philo->meal_mut));
 	//printf("now %lldd - last meal %lld = %lld, tm die = %lld\n", now, philo->last_meal, now - philo->last_meal, philo->var->tm_die);
 	if (now - philo->last_meal > philo->var->tm_die)
+	{
 		status = DIED;
+		console_status(philo, DIED);
+		set_bool(&(philo->var->start_mutex), &(philo->var->start), false);
+	}
+		
 	else if (philo->full)
-		status = FULL;
+		(*all_full)++;
 	pthread_mutex_unlock(&(philo->meal_mut));
 	return (status);
 }
@@ -28,7 +33,6 @@ void	*check_death(void *arg)
 	t_var	*var;
 	int		i;
 	int		all_full;
-	t_status	status;
 
 	var = (t_var *)arg;
 	get_start(var);
@@ -38,28 +42,18 @@ void	*check_death(void *arg)
 		all_full = 0;
 		while (i < var->nbr_ph)
 		{
-			status = is_philo_died(&(var->philos[i]));
-			if (status == DIED)
-			{
-				console_status(&(var->philos[i]), DIED);
-				set_bool(&(var->start_mutex), &(var->start), false);
+			if (check_philo_status(&(var->philos[i]), &all_full) == DIED)
 				break;
-			}
-			if (status == FULL)
-				all_full++;
 			i++;
 		}
 		//printf("var must eat = %d, all full = %d\n", var->must_eat, all_full);
 		if (var->must_eat != -1 && all_full == var->nbr_ph)
 		{
 			set_bool(&(var->start_mutex), &(var->start), false);
-			console_status(&(var->philos[0]), FULL);
 			break;
 		}
 		usleep(100);
 	}
-	//printf("finished loop in check death\n");
-	//ft_cleanup(var, var->nbr_ph, var->nbr_ph);
 	return (NULL);
 }
 
