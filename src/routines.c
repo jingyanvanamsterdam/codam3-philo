@@ -14,7 +14,7 @@ t_status	is_philo_died(t_philo *philo)
 	now = get_ms_time();
 	status = 0;
 	pthread_mutex_lock(&(philo->meal_mut));
-	printf("now %lldd - last meal %lld = %lld, tm die = %lld\n", now, philo->last_meal, now - philo->last_meal, philo->var->tm_die);
+	//printf("now %lldd - last meal %lld = %lld, tm die = %lld\n", now, philo->last_meal, now - philo->last_meal, philo->var->tm_die);
 	if (now - philo->last_meal > philo->var->tm_die)
 		status = DIED;
 	else if (philo->full)
@@ -109,7 +109,7 @@ void	eating(t_philo *philo)
 		philo->full = true;
 	pthread_mutex_unlock(&(philo->meal_mut));
 	console_status(philo, EAT);
-	usleep(var->tm_eat);
+	usleep(var->tm_eat * 1000);
 	pthread_mutex_unlock(philo->first);
 	pthread_mutex_unlock(philo->second); 
 }
@@ -119,7 +119,7 @@ void	sleep_think(t_philo *philo)
 	t_var	*var;
 	var = philo->var;
 	console_status(philo, SLEEP);
-	usleep(var->tm_sleep);
+	usleep(var->tm_sleep * 1000);
 	console_status(philo, THINK);
 }
 
@@ -134,7 +134,7 @@ void	*routine(void *arg)
 	if (philo->var->nbr_ph == 1)
 	{
 		console_status(philo, TAKE_FIRST_FORK);
-		usleep(philo->var->tm_die);
+		usleep(philo->var->tm_die * 1000);
 		console_status(philo, DIED);
 		return (NULL);
 	}
