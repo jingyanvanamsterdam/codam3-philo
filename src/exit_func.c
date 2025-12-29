@@ -4,7 +4,7 @@
 #include "philo.h"
 #include <errno.h>
 
-void	ft_join_threads(int th_i, t_var *var)
+static void	ft_join_threads(int th_i, t_var *var)
 {
 	int	i;
 
@@ -15,7 +15,7 @@ void	ft_join_threads(int th_i, t_var *var)
 	free(var->threads);
 }
 
-void	ft_destory_fork(int fork_i, t_var *var)
+static void	ft_destory_fork(int fork_i, t_var *var)
 {
 	int	i;
 
@@ -33,7 +33,8 @@ void	ft_cleanup(t_var *var, int fork_i, int th_i)
 	int i;
 
 	if (th_i != 0)
-		pthread_join(var->check_die, NULL);
+		if (pthread_join(var->check_die, NULL) != 0)
+			ft_putstr_fd("join threads fails", 2);
 	if (var->threads)
 		ft_join_threads(th_i, var);
 	if (var->forks)

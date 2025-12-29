@@ -47,7 +47,7 @@ struct	s_var
 
 	t_mutex		start_mutex;
 	long long	start_tm;
-	bool		start; //when everyone eat == must_eat; or someone died.
+	bool		start;
 
 	t_mutex		write_mutex;
 	t_mutex		stop_mutex;
@@ -55,16 +55,12 @@ struct	s_var
 };
 
 // Utils: getter and setter with mutex lock and unlock
-bool	get_bool(t_mutex *mutex, bool *value);
-void	set_bool(t_mutex *mutex, bool *dest, bool value);
+bool		get_bool(t_mutex *mutex, bool *value);
+void		set_bool(t_mutex *mutex, bool *dest, bool value);
 
 long long	get_ms_time(void);
-
-// ======= locks 				============
-void	get_start(t_var *var);
-void	console_status(t_philo *philo, t_status status);
-void	eating(t_philo *philo);
-void	sleep_think(t_philo *philo);
+void		get_start(t_var *var);
+void		console_status(t_philo *philo, t_status status);
 
 // ======= free and exit funcs	=============
 void	ft_cleanup(t_var *var, int fork_i, int th_i);
@@ -76,6 +72,8 @@ void	create_philos_threads(t_var *var);
 
 // ======= routines funcs ====================
 void	*check_death(void *arg);
+void	eating(t_philo *philo);
+void	sleep_think(t_philo *philo);
 void	*routine(void *arg);
 
 #endif

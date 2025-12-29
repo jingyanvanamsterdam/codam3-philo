@@ -1,22 +1,6 @@
 #include "libft.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <pthread.h>
-#include <sys/time.h>
-#include <stdlib.h>
 #include "philo.h"
 
-long long	get_ms_time(void)
-{
-	struct timeval tv;
-
-	if (gettimeofday(&tv, NULL) == -1)
-	{
-		perror("gettimeofday failed.");
-		return (-1);
-	}
-	return (tv.tv_sec * 1000LL + tv.tv_usec / 1000);
-}
 /** 	
  * ./philo time_die, time_eat, time_sleep, [must_eat]
  * 

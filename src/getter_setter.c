@@ -21,4 +21,3 @@ void	set_bool(t_mutex *mutex, bool *dest, bool value)
 	//printf("set bool get started%d \n", value);
 	pthread_mutex_unlock(mutex);
 }
-

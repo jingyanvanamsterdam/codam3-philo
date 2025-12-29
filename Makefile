@@ -4,7 +4,7 @@ SRC_DIR = src
 OBJ_DIR := obj
 LIBFT_DIR = libft
 
-SRC = $(addprefix $(SRC_DIR)/, main.c exit_func.c getter_setter.c init.c routines.c locks.c)
+SRC = $(addprefix $(SRC_DIR)/, main.c exit_func.c getter_setter.c init.c routines.c utils.c)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 FLAGS = -Werror -Wextra -Wall -pthread

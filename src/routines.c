@@ -61,50 +61,10 @@ void	*check_death(void *arg)
 	return (NULL);
 }
 
-/* Debug helper: print when a philosopher thread exits (helps ensure joins won't block). */
-
-static void	write_status(t_status status, int id)
-{
-	printf("%lld %d ", get_ms_time(), id);
-	if (status == TAKE_FIRST_FORK)
-	{
-		if (id % 2 == 0)
-			printf("has taken the left fork\n");
-		else
-			printf("has taken the right fork\n");
-	}
-	if (status == TAKE_SECOND_FORK)
-	{
-		if (id % 2 == 0)
-			printf("has taken the right fork\n");
-		else
-			printf("has taken the left fork\n");
-	}
-	if (status == EAT)
-		printf("is eating\n");
-	if (status == SLEEP)
-		printf("is sleeping\n");
-	if (status == THINK)
-		printf("is thinking\n");
-	if (status == DIED)
-		printf("died\n");
-}
-
-void	console_status(t_philo *philo, t_status status)
-{
-	t_var *var;
-	
-	var = philo->var;
-	if (get_bool(&(var->stop_mutex), &(var->stop)) && status != DIED)
-		return ;
-	pthread_mutex_lock(&(var->write_mutex));
-	write_status(status, philo->id);
-	pthread_mutex_unlock(&(var->write_mutex));
-}
 /**
  * If there is an odd amount of philos, let the even philo (the ones more) to wait 
  * then it will avoid the situation where one odd philo cannot take any forks;
- * because of its even neighbor always get a fork.
+ * because of its even neighbor always get a fork. usleep(1000) = 1ms
  */
 void	eating(t_philo *philo)
 {
@@ -112,7 +72,7 @@ void	eating(t_philo *philo)
 
 	var = philo->var;
 	if (philo->id % 2 == 0)
-		usleep(100);
+		usleep(1000);
 	pthread_mutex_lock(philo->first);
 	console_status(philo, TAKE_FIRST_FORK);
 	pthread_mutex_lock(philo->second);
