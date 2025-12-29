@@ -10,21 +10,27 @@ static t_status	check_philo_status(t_philo *philo, int *all_full)
 {
 	long long	now;
 	t_status	status;
+	t_var		*var;
 
 	now = get_ms_time();
 	status = 0;
+	var = philo->var;
 	pthread_mutex_lock(&(philo->meal_mut));
 	//printf("now %lldd - last meal %lld = %lld, tm die = %lld\n", now, philo->last_meal, now - philo->last_meal, philo->var->tm_die);
 	if (now - philo->last_meal > philo->var->tm_die)
-	{
 		status = DIED;
-		console_status(philo, DIED);
-		set_bool(&(philo->var->start_mutex), &(philo->var->start), false);
-	}
-		
 	else if (philo->full)
 		(*all_full)++;
 	pthread_mutex_unlock(&(philo->meal_mut));
+	if (status == DIED)
+	{
+		if (!get_bool(&(var->stop_mutex), &(var->stop)))
+		{
+			set_bool(&(var->stop_mutex), &(var->stop), true);
+			console_status(philo, DIED);
+			set_bool(&(var->start_mutex), &(var->start), false);
+		}
+	}
 	return (status);
 }
 
@@ -38,17 +44,15 @@ void	*check_death(void *arg)
 	get_start(var);
 	while (get_bool(&(var->start_mutex), &(var->start)))
 	{
-		i = 0;
+		i = -1;
 		all_full = 0;
-		while (i < var->nbr_ph)
-		{
+		while (++i < var->nbr_ph)
 			if (check_philo_status(&(var->philos[i]), &all_full) == DIED)
 				break;
-			i++;
-		}
 		//printf("var must eat = %d, all full = %d\n", var->must_eat, all_full);
 		if (var->must_eat != -1 && all_full == var->nbr_ph)
 		{
+			set_bool(&(var->stop_mutex), &(var->stop), true);
 			set_bool(&(var->start_mutex), &(var->start), false);
 			break;
 		}
@@ -59,20 +63,19 @@ void	*check_death(void *arg)
 
 /* Debug helper: print when a philosopher thread exits (helps ensure joins won't block). */
 
-void	console_status(t_philo *philo, t_status status)
+static void	write_status(t_status status, int id)
 {
-	pthread_mutex_lock(&(philo->var->write_mutex));
-	printf("%lld %d ", get_ms_time(), philo->id);
+	printf("%lld %d ", get_ms_time(), id);
 	if (status == TAKE_FIRST_FORK)
 	{
-		if (philo->id % 2 == 0)
+		if (id % 2 == 0)
 			printf("has taken the left fork\n");
 		else
 			printf("has taken the right fork\n");
 	}
 	if (status == TAKE_SECOND_FORK)
 	{
-		if (philo->id % 2 == 0)
+		if (id % 2 == 0)
 			printf("has taken the right fork\n");
 		else
 			printf("has taken the left fork\n");
@@ -85,14 +88,31 @@ void	console_status(t_philo *philo, t_status status)
 		printf("is thinking\n");
 	if (status == DIED)
 		printf("died\n");
-	pthread_mutex_unlock(&(philo->var->write_mutex));
 }
 
+void	console_status(t_philo *philo, t_status status)
+{
+	t_var *var;
+	
+	var = philo->var;
+	if (get_bool(&(var->stop_mutex), &(var->stop)) && status != DIED)
+		return ;
+	pthread_mutex_lock(&(var->write_mutex));
+	write_status(status, philo->id);
+	pthread_mutex_unlock(&(var->write_mutex));
+}
+/**
+ * If there is an odd amount of philos, let the even philo (the ones more) to wait 
+ * then it will avoid the situation where one odd philo cannot take any forks;
+ * because of its even neighbor always get a fork.
+ */
 void	eating(t_philo *philo)
 {
 	t_var	*var;
 
 	var = philo->var;
+	if (philo->id % 2 == 0)
+		usleep(100);
 	pthread_mutex_lock(philo->first);
 	console_status(philo, TAKE_FIRST_FORK);
 	pthread_mutex_lock(philo->second);

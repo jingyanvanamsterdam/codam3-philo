@@ -40,8 +40,10 @@ void	init_var(int ac, char **av, t_var *var)
 	}
 	var->threads = NULL;
 	var->start = false;
+	var->stop = false;
 	if (pthread_mutex_init(&(var->start_mutex), NULL) != 0
-		|| pthread_mutex_init(&(var->write_mutex), NULL) != 0)
+		|| pthread_mutex_init(&(var->write_mutex), NULL) != 0
+		|| pthread_mutex_init(&(var->stop_mutex), NULL) != 0)
 		ft_failure_exit("init start mutex", var, var->nbr_ph, 0);
 	prepare_forks(var);
 }
@@ -56,7 +58,7 @@ static void	init_philo(int i, t_var *var)
 	philo->id = i;
 	philo->last_meal = get_ms_time();
 	philo->meals = 0;
-	if (i % 2 != 0)
+	if (i % 2 == 0)
 	{
 		philo->first = var->forks + i;
 		philo->second = var->forks + ((i + 1) % var->nbr_ph);
@@ -83,22 +85,19 @@ void	create_philos_threads(t_var *var)
 {
 	int	i;
 
-	i = 0;
 	var->threads = (pthread_t *)malloc(var->nbr_ph * sizeof(pthread_t));
 	if (!var->threads)
 		ft_failure_exit("malloc for threads: ", var, var->nbr_ph, 0);
 	var->philos = (t_philo *)malloc(var->nbr_ph * sizeof(t_philo));
 	if (!var->philos)
 		ft_failure_exit("malloc for threads: ", var, var->nbr_ph, 0);
-	while (i < var->nbr_ph)
-	{
+	i = -1;
+	while (++i < var->nbr_ph)
 		init_philo(i, var);
-		i++;
-	}
-	i = 0;
+	i = -1;
 	var->start_tm = get_ms_time();
-	while (i < var->nbr_ph)
-		var->philos[i++].last_meal = var->start_tm;
+	while (++i < var->nbr_ph)
+		var->philos[i].last_meal = var->start_tm;
 	set_bool(&(var->start_mutex), &(var->start), true);
 	if (pthread_create(&(var->check_die), NULL, check_death, var) != 0)
 		ft_failure_exit("create check death thread.", var, var->nbr_ph, 0);

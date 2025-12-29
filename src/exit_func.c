@@ -8,13 +8,10 @@ void	ft_join_threads(int th_i, t_var *var)
 {
 	int	i;
 
-	i = 0;
-	while (i < th_i)
-	{
+	i = -1;
+	while (++i < th_i)
 		if (pthread_join(var->threads[i], NULL) != 0)
 			ft_putstr_fd("join threads fails", 2);
-		i++;
-	}
 	free(var->threads);
 }
 
@@ -22,12 +19,9 @@ void	ft_destory_fork(int fork_i, t_var *var)
 {
 	int	i;
 
-	i = 0;
-	while (i < fork_i)
-	{
+	i = -1;
+	while (++i < fork_i)
 		pthread_mutex_destroy(var->forks + i);
-		i++;
-	}
 	free(var->forks);
 }
 /**
@@ -38,21 +32,18 @@ void	ft_cleanup(t_var *var, int fork_i, int th_i)
 {
 	int i;
 
-	i = 0;
-
 	if (th_i != 0)
 		pthread_join(var->check_die, NULL);
 	if (var->threads)
 		ft_join_threads(th_i, var);
 	if (var->forks)
 		ft_destory_fork(fork_i, var);
-	while (i < th_i)
-	{
+	i = -1;
+	while (++i < th_i)
 		pthread_mutex_destroy(&(var->philos[i].meal_mut));
-		i++;
-	}
 	pthread_mutex_destroy(&(var->start_mutex));
 	pthread_mutex_destroy(&(var->write_mutex));
+	pthread_mutex_destroy(&(var->stop_mutex));
 }
 
 void	ft_failure_exit(char *mes, t_var *var, int fork_i, int th_i)

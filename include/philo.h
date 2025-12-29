@@ -50,6 +50,8 @@ struct	s_var
 	bool		start; //when everyone eat == must_eat; or someone died.
 
 	t_mutex		write_mutex;
+	t_mutex		stop_mutex;
+	bool		stop;
 };
 
 // Utils: getter and setter with mutex lock and unlock
