@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         ::::::::             #
+#    Makefile                                           :+:    :+:             #
+#                                                      +:+                     #
+#    By: jdong <jdong@student.codam.nl>               +#+                      #
+#                                                    +#+                       #
+#    Created: 2026/01/18 14:58:29 by jdong         #+#    #+#                  #
+#    Updated: 2026/01/21 19:44:40 by jdong         ########   odam.nl          #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = philo
 
 SRC_DIR = src
@@ -12,7 +24,7 @@ HEADERS := -Iinclude -I$(LIBFT_DIR)
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
-all: buildlib $(NAME)
+all: $(LIBFT) $(NAME)
 
 # %.o: %.c
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -22,18 +34,18 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 $(NAME): $(OBJ)
 	cc $(HEADERS) $(FLAGS) $(OBJ) $(LIBFT) -o $@
 
-buildlib:
-	$(MAKE) -C $(LIBFT_DIR)
+$(LIBFT):
+	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory
 
 clean:
-	@$(MAKE) -s -C $(LIBFT_DIR) clean
+	@$(MAKE) -s -C $(LIBFT_DIR) clean --no-print-directory
 	rm -f $(OBJ)
 
 fclean: clean
-	@$(MAKE) -s -C $(LIBFT_DIR) fclean
+	@$(MAKE) -s -C $(LIBFT_DIR) fclean --no-print-directory
 	@rmdir $(OBJ_DIR)
 	rm -f $(NAME)
 
 re: fclean all
 
-.PHONY: all buildlib clean fclean re 
+.PHONY: all clean fclean re 

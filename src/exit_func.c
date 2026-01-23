@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   exit_func.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: jdong <jdong@student.codam.nl>               +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/01/18 14:56:33 by jdong         #+#    #+#                 */
+/*   Updated: 2026/01/21 19:27:08 by jdong         ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 #include <pthread.h>
 #include <stdlib.h>
@@ -31,7 +43,7 @@ static void	ft_destory_fork(int fork_i, t_var *var)
  * */
 void	ft_cleanup(t_var *var, int fork_i, int th_i)
 {
-	int i;
+	int	i;
 
 	if (th_i != 0)
 		if (pthread_join(var->check_die, NULL) != 0)
@@ -53,6 +65,7 @@ void	ft_cleanup(t_var *var, int fork_i, int th_i)
 void	ft_failure_exit(char *mes, t_var *var, int fork_i, int th_i)
 {
 	ft_putstr_fd(mes, 2);
+	ft_putstr_fd("\n", 2);
 	if (fork_i != 0 || th_i != 0)
 		ft_cleanup(var, fork_i, th_i);
 	exit(EXIT_FAILURE);
