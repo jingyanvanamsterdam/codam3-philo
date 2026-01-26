@@ -1,17 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ft_calloc.c                                        :+:    :+:            */
+/*   libft.c                                            :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: jdong <jdong@student.codam.nl>               +#+                     */
+/*   By: jingyandong <jingyandong@student.codam.      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/04/30 16:10:28 by jdong         #+#    #+#                 */
-/*   Updated: 2025/05/08 12:10:43 by jingyandong   ########   odam.nl         */
+/*   Created: 2026/01/26 13:48:42 by jingyandong   #+#    #+#                 */
+/*   Updated: 2026/01/26 13:51:13 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <stddef.h>
+#include <unistd.h>
 #include <stdlib.h>
+#include "philo.h"
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	count;
+
+	count = 0;
+	while (s[count])
+		count++;
+	return (count);
+}
+
+void	ft_bzero(void *s, size_t n)
+{
+	unsigned char	*ptrholder;
+
+	ptrholder = (unsigned char *)s;
+	while (n > 0)
+	{
+		*ptrholder = '\0';
+		n--;
+		ptrholder++;
+	}
+}
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
@@ -24,4 +49,12 @@ void	*ft_calloc(size_t nmemb, size_t size)
 		return (NULL);
 	ft_bzero(ptr, nmemb * size);
 	return (ptr);
+}
+
+void	ft_putstr_fd(char *s, int fd)
+{
+	size_t	len;
+
+	len = ft_strlen(s);
+	write(fd, s, len);
 }

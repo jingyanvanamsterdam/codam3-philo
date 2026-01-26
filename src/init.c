@@ -6,11 +6,10 @@
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/01/18 14:56:59 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/23 19:01:00 by jdong         ########   odam.nl         */
+/*   Updated: 2026/01/26 13:29:31 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -34,26 +33,23 @@ static void	prepare_forks(t_var *var)
 
 void	init_var(int ac, char **av, t_var *var)
 {
-	//check int Max and longlong max
-	var->nbr_ph = ft_atoi(av[1]);
-	var->tm_die = ft_atoll(av[2]) * 1000;
-	var->tm_eat = ft_atoll(av[3]) * 1000;
-	var->tm_sleep = ft_atoll(av[4]) * 1000;
-	if (var->nbr_ph <= 0 || var->tm_die <= 0 || var->tm_eat <= 0
-		|| var->tm_sleep < 0)
-		exit(EXIT_FAILURE);
-	if (var->nbr_ph > 200)
-		ft_failure_exit("Number of philo should be less 200", var, 0, 0);
+	if (!ft_parse_int(av[1], &(var->nbr_ph)) || var->nbr_ph > 200)
+		ft_input_exit(1);
+	if (!ft_parse_ll(av[2], &(var->tm_die)))
+		ft_input_exit(2);
+	if (!ft_parse_ll(av[3], &(var->tm_eat)))
+		ft_input_exit(3);
+	if (!ft_parse_ll(av[4], &(var->tm_sleep)))
+		ft_input_exit(4);
 	var->must_eat = -1;
 	if (ac == 6)
 	{
-		var->must_eat = ft_atoi(av[5]);
-		if (var->must_eat == 0)
-			ft_failure_exit("Must eat value cannot be 0", var, 0, 0);
+		if (!ft_parse_int(av[5], &(var->must_eat)))
+			ft_input_exit(5);
 	}
 	var->threads = NULL;
-	var->start = false;
-	var->stop = false;
+	var->start = 0;
+	var->stop = 0;
 	if (pthread_mutex_init(&(var->start_mutex), NULL) != 0
 		|| pthread_mutex_init(&(var->write_mutex), NULL) != 0
 		|| pthread_mutex_init(&(var->stop_mutex), NULL) != 0)
@@ -67,7 +63,7 @@ static void	init_philo(int i, t_var *var)
 
 	philo = &(var->philos[i]);
 	philo->var = var;
-	philo->full = false;
+	philo->full = 0;
 	philo->id = i + 1;
 	philo->last_meal = get_us_time();
 	philo->meals = 0;
@@ -110,7 +106,7 @@ void	create_philos_threads(t_var *var)
 	var->start_tm = get_us_time();
 	while (++i < var->nbr_ph)
 		var->philos[i].last_meal = var->start_tm;
-	set_bool(&(var->start_mutex), &(var->start), true);
+	set_bool(&(var->start_mutex), &(var->start), 1);
 	if (pthread_create(&(var->check_die), NULL, check_death, var) != 0)
 		ft_failure_exit("create check death thread", var, var->nbr_ph, 0);
 }

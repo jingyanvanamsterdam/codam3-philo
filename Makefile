@@ -6,7 +6,7 @@
 #    By: jdong <jdong@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2026/01/18 14:58:29 by jdong         #+#    #+#                  #
-#    Updated: 2026/01/21 19:44:40 by jdong         ########   odam.nl          #
+#    Updated: 2026/01/26 13:36:08 by jingyandong   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,17 +14,15 @@ NAME = philo
 
 SRC_DIR = src
 OBJ_DIR := obj
-LIBFT_DIR = libft
 
-SRC = $(addprefix $(SRC_DIR)/, main.c exit_func.c getter_setter.c init.c routines.c utils.c)
+SRC = $(addprefix $(SRC_DIR)/, main.c exit_func.c getter_setter.c \
+								init.c routines.c utils.c parse.c libft.c)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 FLAGS = -Werror -Wextra -Wall -pthread
-HEADERS := -Iinclude -I$(LIBFT_DIR)
+HEADERS := -Iinclude
 
-LIBFT = $(LIBFT_DIR)/libft.a
-
-all: $(LIBFT) $(NAME)
+all: $(NAME)
 
 # %.o: %.c
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -34,15 +32,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 $(NAME): $(OBJ)
 	cc $(HEADERS) $(FLAGS) $(OBJ) $(LIBFT) -o $@
 
-$(LIBFT):
-	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory
-
 clean:
-	@$(MAKE) -s -C $(LIBFT_DIR) clean --no-print-directory
 	rm -f $(OBJ)
 
 fclean: clean
-	@$(MAKE) -s -C $(LIBFT_DIR) fclean --no-print-directory
 	@rmdir $(OBJ_DIR)
 	rm -f $(NAME)
 

@@ -6,11 +6,10 @@
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/01/18 14:57:26 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/23 19:03:23 by jdong         ########   odam.nl         */
+/*   Updated: 2026/01/26 13:51:06 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -34,11 +33,11 @@ static t_status	check_philo_status(t_philo *philo, int *all_full)
 		status = DIED;
 	pthread_mutex_unlock(&(philo->meal_mut));
 	if (status == FULL)
-		set_bool(&(var->stop_mutex), &(var->stop), true);
+		set_bool(&(var->stop_mutex), &(var->stop), 1);
 	if (status == DIED
 		&& !get_bool(&(var->stop_mutex), &(var->stop)))
 	{
-		set_bool(&(var->stop_mutex), &(var->stop), true);
+		set_bool(&(var->stop_mutex), &(var->stop), 1);
 		console_status(philo, DIED);
 	}
 	return (status);
@@ -88,14 +87,12 @@ int	eating(t_philo *philo)
 	console_status(philo, TAKE_SECOND_FORK);
 	console_status(philo, EAT);
 	if (++philo->meals == var->must_eat && var->must_eat != -1)
-		philo->full = true;
-	pthread_mutex_unlock(&(philo->meal_mut));	
+		philo->full = 1;
+	pthread_mutex_unlock(&(philo->meal_mut));
 	pthread_mutex_unlock(philo->second);
 	pthread_mutex_unlock(philo->first);
-	// write a usleep function
-	if (!ft_usleep(duration))
+	if (!ft_usleep(var, EAT))
 		return (0);
-	usleep(var->tm_eat);
 	return (1);
 }
 
@@ -105,7 +102,8 @@ void	sleep_think(t_philo *philo)
 
 	var = philo->var;
 	console_status(philo, SLEEP);
-	usleep(var->tm_sleep);
+	if (!ft_usleep(var, SLEEP))
+		return ;
 	console_status(philo, THINK);
 }
 
@@ -120,12 +118,11 @@ void	*routine(void *arg)
 	if (philo->var->nbr_ph == 1)
 	{
 		console_status(philo, TAKE_FIRST_FORK);
-		usleep(philo->var->tm_die);
+		ft_usleep(var, DIED);
 		return (NULL);
 	}
 	while (!get_bool(&(var->stop_mutex), &(var->stop)))
 	{
-		// if it is full, keep eating?
 		if (get_bool(&(philo->meal_mut), &(philo->full)))
 			break ;
 		if (!eating(philo))

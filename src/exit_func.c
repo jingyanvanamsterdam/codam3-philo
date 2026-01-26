@@ -6,11 +6,10 @@
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/01/18 14:56:33 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/21 19:27:08 by jdong         ########   odam.nl         */
+/*   Updated: 2026/01/26 13:50:16 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include <pthread.h>
 #include <stdlib.h>
 #include "philo.h"
@@ -68,5 +67,19 @@ void	ft_failure_exit(char *mes, t_var *var, int fork_i, int th_i)
 	ft_putstr_fd("\n", 2);
 	if (fork_i != 0 || th_i != 0)
 		ft_cleanup(var, fork_i, th_i);
+	exit(EXIT_FAILURE);
+}
+
+void	ft_input_exit(int arg)
+{
+	if (arg == 1)
+		ft_putstr_fd("Input for number of philos"
+			"must be possitive and less than 200.", 2);
+	if (arg == 2 || arg == 3 || arg == 4)
+		ft_putstr_fd("Input for times "
+			"must be possitive and smaller than a long long max.", 2);
+	if (arg == 5)
+		ft_putstr_fd("Input for must_to_eat "
+			"must be a possitive number", 2);
 	exit(EXIT_FAILURE);
 }

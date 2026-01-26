@@ -6,11 +6,10 @@
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/01/18 14:57:11 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/21 19:47:35 by jdong         ########   odam.nl         */
+/*   Updated: 2026/01/26 13:28:42 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "philo.h"
 
 /** 	
