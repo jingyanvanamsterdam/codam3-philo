@@ -1,33 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   getter_setter.c                                    :+:    :+:            */
+/*   ft_strncmp.c                                       :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2026/01/18 14:56:44 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/18 15:09:16 by jdong         ########   odam.nl         */
+/*   Created: 2025/04/30 16:02:02 by jdong         #+#    #+#                 */
+/*   Updated: 2025/05/06 13:28:23 by jdong         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <pthread.h>
-#include "philo.h"
-#include <stdbool.h>
-#include <stdio.h> // prinft
+#include <stddef.h>
 
-bool	get_bool(t_mutex *mutex, bool *value)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	bool	res;
+	size_t	i;
 
-	pthread_mutex_lock(mutex);
-	res = *value;
-	pthread_mutex_unlock(mutex);
-	return (res);
-}
-
-void	set_bool(t_mutex *mutex, bool *dest, bool value)
-{
-	pthread_mutex_lock(mutex);
-	*dest = value;
-	pthread_mutex_unlock(mutex);
+	i = 0;
+	while (i < n && s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+	if (i == n)
+		return (0);
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }

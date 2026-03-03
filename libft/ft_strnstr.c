@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   getter_setter.c                                    :+:    :+:            */
+/*   ft_strnstr.c                                       :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2026/01/18 14:56:44 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/18 15:09:16 by jdong         ########   odam.nl         */
+/*   Created: 2025/04/30 16:03:45 by jdong         #+#    #+#                 */
+/*   Updated: 2025/05/08 12:17:50 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <pthread.h>
-#include "philo.h"
-#include <stdbool.h>
-#include <stdio.h> // prinft
+#include <stddef.h>
 
-bool	get_bool(t_mutex *mutex, bool *value)
+char	*ft_strnstr(const char *big, const char *little, size_t len)
 {
-	bool	res;
+	size_t	i;
+	size_t	j;
 
-	pthread_mutex_lock(mutex);
-	res = *value;
-	pthread_mutex_unlock(mutex);
-	return (res);
-}
-
-void	set_bool(t_mutex *mutex, bool *dest, bool value)
-{
-	pthread_mutex_lock(mutex);
-	*dest = value;
-	pthread_mutex_unlock(mutex);
+	if (!little[0])
+		return ((char *)big);
+	i = 0;
+	while (i < len && big[i])
+	{
+		j = 0;
+		while (big[i + j] == little[j] && (i + j) < len && little[j])
+			j++;
+		if (!little[j])
+			return ((char *)&big[i]);
+		i++;
+	}
+	return (NULL);
 }

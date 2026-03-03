@@ -6,10 +6,11 @@
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/01/18 14:57:26 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/26 13:51:06 by jingyandong   ########   odam.nl         */
+/*   Updated: 2026/01/22 15:30:17 by jdong         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -33,11 +34,11 @@ static t_status	check_philo_status(t_philo *philo, int *all_full)
 		status = DIED;
 	pthread_mutex_unlock(&(philo->meal_mut));
 	if (status == FULL)
-		set_bool(&(var->stop_mutex), &(var->stop), 1);
+		set_bool(&(var->stop_mutex), &(var->stop), true);
 	if (status == DIED
 		&& !get_bool(&(var->stop_mutex), &(var->stop)))
 	{
-		set_bool(&(var->stop_mutex), &(var->stop), 1);
+		set_bool(&(var->stop_mutex), &(var->stop), true);
 		console_status(philo, DIED);
 	}
 	return (status);
@@ -72,7 +73,7 @@ void	*check_death(void *arg)
  * then it will avoid the situation where one even philo cannot take any forks;
  * because of its odd neighbor always get a fork. usleep(1000) = 1ms
  */
-int	eating(t_philo *philo)
+void	eating(t_philo *philo)
 {
 	t_var	*var;
 
@@ -84,16 +85,14 @@ int	eating(t_philo *philo)
 	pthread_mutex_lock(philo->second);
 	pthread_mutex_lock(&(philo->meal_mut));
 	philo->last_meal = get_us_time();
+	if (++philo->meals == var->must_eat && var->must_eat != -1)
+		philo->full = true;
+	pthread_mutex_unlock(&(philo->meal_mut));
 	console_status(philo, TAKE_SECOND_FORK);
 	console_status(philo, EAT);
-	if (++philo->meals == var->must_eat && var->must_eat != -1)
-		philo->full = 1;
-	pthread_mutex_unlock(&(philo->meal_mut));
+	usleep(var->tm_eat);
 	pthread_mutex_unlock(philo->second);
 	pthread_mutex_unlock(philo->first);
-	if (!ft_usleep(var, EAT))
-		return (0);
-	return (1);
 }
 
 void	sleep_think(t_philo *philo)
@@ -102,8 +101,7 @@ void	sleep_think(t_philo *philo)
 
 	var = philo->var;
 	console_status(philo, SLEEP);
-	if (!ft_usleep(var, SLEEP))
-		return ;
+	usleep(var->tm_sleep);
 	console_status(philo, THINK);
 }
 
@@ -118,15 +116,14 @@ void	*routine(void *arg)
 	if (philo->var->nbr_ph == 1)
 	{
 		console_status(philo, TAKE_FIRST_FORK);
-		ft_usleep(var, DIED);
+		usleep(philo->var->tm_die);
 		return (NULL);
 	}
 	while (!get_bool(&(var->stop_mutex), &(var->stop)))
 	{
 		if (get_bool(&(philo->meal_mut), &(philo->full)))
 			break ;
-		if (!eating(philo))
-			return (NULL);
+		eating(philo);
 		sleep_think(philo);
 	}
 	return (NULL);

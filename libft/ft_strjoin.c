@@ -1,33 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   getter_setter.c                                    :+:    :+:            */
+/*   ft_strjoin.c                                       :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2026/01/18 14:56:44 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/18 15:09:16 by jdong         ########   odam.nl         */
+/*   Created: 2025/04/30 17:43:19 by jdong         #+#    #+#                 */
+/*   Updated: 2025/05/08 12:16:17 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <pthread.h>
-#include "philo.h"
-#include <stdbool.h>
-#include <stdio.h> // prinft
+#include "libft.h"
+#include <stdlib.h>
 
-bool	get_bool(t_mutex *mutex, bool *value)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
-	bool	res;
+	char	*str;
+	size_t	size;
 
-	pthread_mutex_lock(mutex);
-	res = *value;
-	pthread_mutex_unlock(mutex);
-	return (res);
-}
-
-void	set_bool(t_mutex *mutex, bool *dest, bool value)
-{
-	pthread_mutex_lock(mutex);
-	*dest = value;
-	pthread_mutex_unlock(mutex);
+	if (!s1 && !s2)
+		return (NULL);
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (ft_strdup(s1));
+	size = ft_strlen(s1) + ft_strlen(s2) + 1;
+	str = malloc(size);
+	if (!str)
+		return (NULL);
+	str[0] = '\0';
+	ft_strlcpy(str, s1, size);
+	ft_strlcat(str, s2, size);
+	return (str);
 }

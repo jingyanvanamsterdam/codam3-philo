@@ -1,33 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   getter_setter.c                                    :+:    :+:            */
+/*   ft_bzero.c                                         :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2026/01/18 14:56:44 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/18 15:09:16 by jdong         ########   odam.nl         */
+/*   Created: 2025/04/30 16:05:56 by jdong         #+#    #+#                 */
+/*   Updated: 2025/05/06 13:45:33 by jdong         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <pthread.h>
-#include "philo.h"
-#include <stdbool.h>
-#include <stdio.h> // prinft
+#include <stddef.h>
 
-bool	get_bool(t_mutex *mutex, bool *value)
+void	ft_bzero(void *s, size_t n)
 {
-	bool	res;
+	unsigned char	*ptrholder;
 
-	pthread_mutex_lock(mutex);
-	res = *value;
-	pthread_mutex_unlock(mutex);
-	return (res);
-}
-
-void	set_bool(t_mutex *mutex, bool *dest, bool value)
-{
-	pthread_mutex_lock(mutex);
-	*dest = value;
-	pthread_mutex_unlock(mutex);
+	ptrholder = (unsigned char *)s;
+	while (n > 0)
+	{
+		*ptrholder = '\0';
+		n--;
+		ptrholder++;
+	}
 }

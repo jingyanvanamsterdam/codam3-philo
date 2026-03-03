@@ -1,33 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   getter_setter.c                                    :+:    :+:            */
+/*   ft_putnbr_fd.c                                     :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2026/01/18 14:56:44 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/18 15:09:16 by jdong         ########   odam.nl         */
+/*   Created: 2025/05/02 13:53:10 by jdong         #+#    #+#                 */
+/*   Updated: 2025/05/08 12:21:45 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <pthread.h>
-#include "philo.h"
-#include <stdbool.h>
-#include <stdio.h> // prinft
+#include "libft.h"
 
-bool	get_bool(t_mutex *mutex, bool *value)
+void	ft_putnbr_fd(int n, int fd)
 {
-	bool	res;
+	long	number;
 
-	pthread_mutex_lock(mutex);
-	res = *value;
-	pthread_mutex_unlock(mutex);
-	return (res);
-}
-
-void	set_bool(t_mutex *mutex, bool *dest, bool value)
-{
-	pthread_mutex_lock(mutex);
-	*dest = value;
-	pthread_mutex_unlock(mutex);
+	number = n;
+	if (number < 0)
+	{
+		ft_putchar_fd('-', fd);
+		number = -number;
+	}
+	if (number >= 10)
+		ft_putnbr_fd(number / 10, fd);
+	ft_putchar_fd(number % 10 + '0', fd);
 }

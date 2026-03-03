@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   getter_setter.c                                    :+:    :+:            */
+/*   ft_memset.c                                        :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2026/01/18 14:56:44 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/18 15:09:16 by jdong         ########   odam.nl         */
+/*   Created: 2025/04/30 16:05:26 by jdong         #+#    #+#                 */
+/*   Updated: 2025/05/06 13:49:32 by jdong         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <pthread.h>
-#include "philo.h"
-#include <stdbool.h>
-#include <stdio.h> // prinft
+#include <stddef.h>
 
-bool	get_bool(t_mutex *mutex, bool *value)
+void	*ft_memset(void *s, int c, size_t n)
 {
-	bool	res;
+	unsigned char	*ptrholder;
 
-	pthread_mutex_lock(mutex);
-	res = *value;
-	pthread_mutex_unlock(mutex);
-	return (res);
-}
-
-void	set_bool(t_mutex *mutex, bool *dest, bool value)
-{
-	pthread_mutex_lock(mutex);
-	*dest = value;
-	pthread_mutex_unlock(mutex);
+	ptrholder = (unsigned char *)s;
+	if (n == 0)
+		return (s);
+	while (n > 0)
+	{
+		*ptrholder = (unsigned char)c;
+		n--;
+		ptrholder++;
+	}
+	return (s);
 }

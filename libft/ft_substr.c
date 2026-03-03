@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   getter_setter.c                                    :+:    :+:            */
+/*   ft_substr.c                                        :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jdong <jdong@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2026/01/18 14:56:44 by jdong         #+#    #+#                 */
-/*   Updated: 2026/01/18 15:09:16 by jdong         ########   odam.nl         */
+/*   Created: 2025/04/30 16:49:07 by jdong         #+#    #+#                 */
+/*   Updated: 2025/05/08 12:19:17 by jingyandong   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <pthread.h>
-#include "philo.h"
-#include <stdbool.h>
-#include <stdio.h> // prinft
+#include "libft.h"
+#include <stdlib.h>
 
-bool	get_bool(t_mutex *mutex, bool *value)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	bool	res;
+	char	*subs;
+	size_t	s_len;
 
-	pthread_mutex_lock(mutex);
-	res = *value;
-	pthread_mutex_unlock(mutex);
-	return (res);
-}
-
-void	set_bool(t_mutex *mutex, bool *dest, bool value)
-{
-	pthread_mutex_lock(mutex);
-	*dest = value;
-	pthread_mutex_unlock(mutex);
+	if (!s)
+		return (NULL);
+	s_len = ft_strlen((char *)s);
+	if (start >= s_len)
+		return (ft_strdup(""));
+	if (start + len > s_len)
+		len = s_len - start;
+	subs = malloc(len + 1);
+	if (!subs)
+		return (NULL);
+	ft_strlcpy(subs, s + start, len + 1);
+	return (subs);
 }
